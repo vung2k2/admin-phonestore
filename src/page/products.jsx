@@ -62,7 +62,7 @@ const ImportButton = () => {
   );
 };
 
-const postFilters = [
+const productFilters = [
   <SearchInput
     key={1}
     source="q"
@@ -96,7 +96,7 @@ export const ProductList = (props) => (
         </Box>
       </>
     }
-    filters={postFilters}
+    filters={productFilters}
     sort={{ field: "quantity", order: "ASC" }}
   >
     <DatagridConfigurable

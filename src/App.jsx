@@ -1,8 +1,9 @@
 import React from "react";
 import { Admin, Resource } from "react-admin";
 import dataProvider from "./dataProvider";
-import { CustomersList } from "./page/customers";
-import { ProductList, ProductEdit, ProductCreate } from "./page/products";
+import { CustomersList } from "./page/Customers";
+import { ProductList, ProductEdit, ProductCreate } from "./page/Products";
+import { OrderList } from "./page/Orders";
 
 const App = () => (
   <Admin dataProvider={dataProvider}>
@@ -13,6 +14,7 @@ const App = () => (
       create={ProductCreate}
     />
     <Resource name="customers" list={CustomersList} />
+    <Resource name="orders" list={OrderList} />
   </Admin>
 );
 
