@@ -10,12 +10,13 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import themes from "./themes";
 import { authProvider } from "./authProvider";
-import LoginPage from "./page/Login";
+import Dashboard from "./page/dashboard/Dashboard";
 
 const App = () => (
   <Admin
     dataProvider={dataProvider}
     authProvider={authProvider}
+    dashboard={Dashboard}
     // loginPage={LoginPage}
     {...themes}
   >
