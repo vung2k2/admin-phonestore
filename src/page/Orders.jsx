@@ -2,12 +2,9 @@ import * as React from "react";
 import { Fragment, useCallback } from "react";
 import {
   List,
-  Datagrid,
   TextField,
   NumberField,
   DateField,
-  Filter,
-  SelectInput,
   useListContext,
   Count,
   SearchInput,
@@ -15,9 +12,12 @@ import {
   SelectColumnsButton,
   ExportButton,
   TopToolbar,
+  useRecordContext,
+  useNotify,
+  useRefresh,
+  useDataProvider,
 } from "react-admin";
 import {
-  useMediaQuery,
   Divider,
   Tabs,
   Tab,
@@ -30,10 +30,14 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Button,
+  Box,
 } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const orderFilters = [
-  <SearchInput key={3} source="q" alwaysOn placeholder="Search by order" />,
+  <SearchInput key={3} source="q" alwaysOn placeholder="Search in orders" />,
 ];
 
 const tabs = [
@@ -41,6 +45,57 @@ const tabs = [
   { id: "completed", name: "completed" },
   { id: "cancelled", name: "cancelled" },
 ];
+
+const ActionButtons = () => {
+  const record = useRecordContext();
+  const notify = useNotify();
+  const refresh = useRefresh();
+  const dataProvider = useDataProvider();
+
+  const handleConfirm = async (event) => {
+    event.stopPropagation();
+    try {
+      await dataProvider.update("orders", {
+        id: record.id,
+        data: { status: "completed" },
+      });
+      notify("Order confirmed", { type: "success" });
+      refresh();
+    } catch (error) {
+      notify("Error: Unable to confirm order", { type: "error" });
+    }
+  };
+
+  const handleCancel = async (event) => {
+    event.stopPropagation();
+    try {
+      await dataProvider.update("orders", {
+        id: record.id,
+        data: { status: "cancelled" },
+      });
+      notify("Order cancelled", { type: "success" });
+      refresh();
+    } catch (error) {
+      notify("Error: Unable to cancel order", { type: "error" });
+    }
+  };
+
+  return (
+    <Box display="flex" alignItems="center">
+      <Button onClick={handleConfirm} color="primary" startIcon={<CheckIcon />}>
+        Confirm
+      </Button>
+      <Button
+        onClick={handleCancel}
+        color="secondary"
+        startIcon={<CancelIcon />}
+        sx={{ ml: 1 }}
+      >
+        Cancel
+      </Button>
+    </Box>
+  );
+};
 
 const TabbedDatagrid = () => {
   const listContext = useListContext();
@@ -71,7 +126,7 @@ const TabbedDatagrid = () => {
             key={choice.id}
             label={
               <span>
-                {choice.name} (
+                {choice.name.charAt(0).toUpperCase() + choice.name.slice(1)} (
                 <Count
                   filter={{
                     ...filterValues,
@@ -90,30 +145,31 @@ const TabbedDatagrid = () => {
       <>
         {filterValues.status === "pending" && (
           <DatagridConfigurable
-            rowClick="edit"
+            rowClick="expand"
+            expand={<ProductDetails />}
             sx={{
               "& .RaDatagrid-headerCell": {
                 fontWeight: "bold",
               },
             }}
-            expand={<ProductDetails />}
           >
             <TextField source="id" />
             <DateField source="order_date" />
             <TextField source="orderInfo" />
             <NumberField source="products.length" label="Items" />
             <NumberField source="total_amount" />
+            <ActionButtons />
           </DatagridConfigurable>
         )}
         {filterValues.status === "completed" && (
           <DatagridConfigurable
-            rowClick="edit"
+            rowClick="expand"
+            expand={<ProductDetails />}
             sx={{
               "& .RaDatagrid-headerCell": {
                 fontWeight: "bold",
               },
             }}
-            expand={<ProductDetails />}
           >
             <TextField source="id" />
             <DateField source="order_date" />
@@ -124,13 +180,13 @@ const TabbedDatagrid = () => {
         )}
         {filterValues.status === "cancelled" && (
           <DatagridConfigurable
-            rowClick="edit"
+            rowClick="expand"
+            expand={<ProductDetails />}
             sx={{
               "& .RaDatagrid-headerCell": {
                 fontWeight: "bold",
               },
             }}
-            expand={<ProductDetails />}
           >
             <TextField source="id" />
             <DateField source="order_date" />

@@ -63,12 +63,7 @@ const ImportButton = () => {
 };
 
 const productFilters = [
-  <SearchInput
-    key={1}
-    source="q"
-    alwaysOn
-    placeholder="Search by name product"
-  />,
+  <SearchInput key={1} source="q" alwaysOn placeholder="Search in products" />,
 ];
 
 export const ProductList = (props) => (

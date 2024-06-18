@@ -1,9 +1,76 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:1407/admin";
-const httpClient = axios.create({
-  baseURL: apiUrl,
-});
+const apiUrl = `${import.meta.env.VITE_API_URL}/admin`;
+
+let refreshTokenPromise = null;
+
+axios.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers.Accesstoken = accessToken;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._isRetry) {
+      originalRequest._isRetry = true;
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (refreshToken) {
+        if (!refreshTokenPromise) {
+          refreshTokenPromise = refreshAccessToken(refreshToken);
+          refreshTokenPromise
+            .then((newAccessToken) => {
+              localStorage.setItem("accessToken", newAccessToken);
+              refreshTokenPromise = null;
+            })
+            .catch(() => {
+              refreshTokenPromise = null;
+            });
+        }
+
+        const newAccessToken = await refreshTokenPromise;
+        originalRequest.headers["Accesstoken"] = newAccessToken;
+        return axios(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+const refreshAccessToken = async (refreshToken) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+      null,
+      {
+        headers: { refreshToken: refreshToken },
+      }
+    );
+    if (!response.data.accessToken || !response.data.refreshToken) {
+      throw new Error("Refresh token response is empty");
+    }
+    const newAccessToken = response.data.accessToken;
+    const newRefreshToken = response.data.refreshToken;
+    localStorage.setItem("refreshToken", newRefreshToken);
+    return newAccessToken;
+  } catch (error) {
+    localStorage.removeItem("username");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
+  }
+};
 
 const dataProvider = {
   importProducts: async (file) => {
@@ -42,33 +109,33 @@ const dataProvider = {
     return { data: dataWithId };
   },
 
-  getMany: async (resource, params) => {
-    const query = {
-      filter: JSON.stringify({ id: params.ids }),
-    };
-    const url = `/${resource}?${new URLSearchParams(query).toString()}`;
-    const response = await httpClient.get(url);
-    return { data: response.data };
-  },
+  // getMany: async (resource, params) => {
+  //   const query = {
+  //     filter: JSON.stringify({ id: params.ids }),
+  //   };
+  //   const url = `/${resource}?${new URLSearchParams(query).toString()}`;
+  //   const response = await httpClient.get(url);
+  //   return { data: response.data };
+  // },
 
-  getManyReference: async (resource, params) => {
-    const { page, perPage } = params.pagination;
-    const { field, order } = params.sort;
-    const query = {
-      sort: JSON.stringify([field, order]),
-      range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
-      filter: JSON.stringify({
-        ...params.filter,
-        [params.target]: params.id,
-      }),
-    };
-    const url = `/${resource}?${new URLSearchParams(query).toString()}`;
-    const response = await httpClient.get(url);
-    return {
-      data: response.data,
-      total: parseInt(response.headers["content-range"].split("/").pop(), 10),
-    };
-  },
+  // getManyReference: async (resource, params) => {
+  //   const { page, perPage } = params.pagination;
+  //   const { field, order } = params.sort;
+  //   const query = {
+  //     sort: JSON.stringify([field, order]),
+  //     range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+  //     filter: JSON.stringify({
+  //       ...params.filter,
+  //       [params.target]: params.id,
+  //     }),
+  //   };
+  //   const url = `/${resource}?${new URLSearchParams(query).toString()}`;
+  //   const response = await httpClient.get(url);
+  //   return {
+  //     data: response.data,
+  //     total: parseInt(response.headers["content-range"].split("/").pop(), 10),
+  //   };
+  // },
 
   update: async (resource, params) => {
     const res = await axios.put(
@@ -79,14 +146,14 @@ const dataProvider = {
     return { data: dataWithId };
   },
 
-  updateMany: async (resource, params) => {
-    const query = {
-      filter: JSON.stringify({ id: params.ids }),
-    };
-    const url = `/${resource}?${new URLSearchParams(query).toString()}`;
-    const response = await httpClient.put(url, params.data);
-    return { data: response.data };
-  },
+  // updateMany: async (resource, params) => {
+  //   const query = {
+  //     filter: JSON.stringify({ id: params.ids }),
+  //   };
+  //   const url = `/${resource}?${new URLSearchParams(query).toString()}`;
+  //   const response = await httpClient.put(url, params.data);
+  //   return { data: response.data };
+  // },
 
   create: async (resource, params) => {
     const formData = new FormData();

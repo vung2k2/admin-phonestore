@@ -8,18 +8,11 @@ import {
   TopToolbar,
   SelectColumnsButton,
   ExportButton,
-  Edit,
 } from "react-admin";
 
 const customerFilters = [
-  <SearchInput
-    key={2}
-    source="q"
-    alwaysOn
-    placeholder="Search by name customer"
-  />,
+  <SearchInput key={2} source="q" alwaysOn placeholder="Search in customer" />,
 ];
-const postRowSx = (record, index) => console.log("ok");
 
 export const CustomersList = (props) => (
   <List
@@ -30,7 +23,6 @@ export const CustomersList = (props) => (
         <SelectColumnsButton /> <ExportButton />
       </TopToolbar>
     }
-    rowSx={postRowSx}
   >
     <DatagridConfigurable
       sx={{
