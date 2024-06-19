@@ -86,6 +86,28 @@ const dataProvider = {
     return response.data;
   },
 
+  getTotalRevenue: async () => {
+    const response = await axios.get(`${apiUrl}/total-revenue`);
+    return response.data;
+  },
+
+  getRevenueLast30Days: async () => {
+    const response = await axios.get(`${apiUrl}/revenue-last-30-days`);
+    return response.data;
+  },
+
+  getRevenueYearToDate: async () => {
+    const response = await axios.get(`${apiUrl}/revenue-year-to-date`);
+    return response.data;
+  },
+
+  getTotalOrdersByStatus: async (status) => {
+    const response = await axios.get(`${apiUrl}/total-orders-by-status`, {
+      params: { status },
+    });
+    return response.data;
+  },
+
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;

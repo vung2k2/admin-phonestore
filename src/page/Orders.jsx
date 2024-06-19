@@ -154,10 +154,10 @@ const TabbedDatagrid = () => {
             }}
           >
             <TextField source="id" />
-            <DateField source="order_date" />
+            <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
             <NumberField source="products.length" label="Items" />
-            <NumberField source="total_amount" />
+            <NumberField source="totalAmount" />
             <ActionButtons />
           </DatagridConfigurable>
         )}
@@ -172,10 +172,10 @@ const TabbedDatagrid = () => {
             }}
           >
             <TextField source="id" />
-            <DateField source="order_date" />
+            <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
             <NumberField source="products.length" label="Items" />
-            <NumberField source="total_amount" />
+            <NumberField source="totalAmount" />
           </DatagridConfigurable>
         )}
         {filterValues.status === "cancelled" && (
@@ -189,10 +189,10 @@ const TabbedDatagrid = () => {
             }}
           >
             <TextField source="id" />
-            <DateField source="order_date" />
+            <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
             <NumberField source="products.length" label="Items" />
-            <NumberField source="total_amount" />
+            <NumberField source="totalAmount" />
           </DatagridConfigurable>
         )}
       </>
