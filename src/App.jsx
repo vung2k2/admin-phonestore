@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Admin, Resource, CheckForApplicationUpdate } from "react-admin";
+import { Admin, Resource } from "react-admin";
 import dataProvider from "./dataProvider";
 import { CustomersList } from "./page/Customers";
 import { ProductList, ProductEdit, ProductCreate } from "./page/Products";
@@ -20,7 +20,6 @@ const App = () => (
     // loginPage={LoginPage}
     {...themes}
   >
-    <CheckForApplicationUpdate interval={3000} />
     <Resource
       name="products"
       list={ProductList}
