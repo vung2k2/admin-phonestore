@@ -19,20 +19,19 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const revenue = await dataProvider.getTotalRevenue();
-        const revenue30Days = await dataProvider.getRevenueLast30Days();
-        const revenueYear = await dataProvider.getRevenueYearToDate();
+        setTotalRevenue(revenue);
         const completedOrders = await dataProvider.getTotalOrdersByStatus(
           "completed"
         );
+        setTotalCompletedOrders(completedOrders);
         const pendingOrders = await dataProvider.getTotalOrdersByStatus(
           "pending"
         );
-
-        setTotalRevenue(revenue);
-        setRevenueLast30Days(revenue30Days);
-        setRevenueYearToDate(revenueYear);
-        setTotalCompletedOrders(completedOrders);
         setTotalPendingOrders(pendingOrders);
+        const revenue30Days = await dataProvider.getRevenueLast30Days();
+        setRevenueLast30Days(revenue30Days);
+        const revenueYear = await dataProvider.getRevenueYearToDate();
+        setRevenueYearToDate(revenueYear);
       } catch (error) {
         notify("Error fetching data", { type: "error" });
       }
