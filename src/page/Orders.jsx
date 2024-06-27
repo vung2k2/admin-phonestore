@@ -156,6 +156,7 @@ const TabbedDatagrid = () => {
             <TextField source="id" />
             <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
+            <TextField source="provider" />
             <NumberField source="products.length" label="Items" />
             <NumberField source="totalAmount" />
             <ActionButtons />
@@ -174,6 +175,7 @@ const TabbedDatagrid = () => {
             <TextField source="id" />
             <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
+            <TextField source="provider" />
             <NumberField source="products.length" label="Items" />
             <NumberField source="totalAmount" />
           </DatagridConfigurable>
@@ -191,6 +193,7 @@ const TabbedDatagrid = () => {
             <TextField source="id" />
             <DateField source="createdAt" showTime />
             <TextField source="orderInfo" />
+            <TextField source="provider" />
             <NumberField source="products.length" label="Items" />
             <NumberField source="totalAmount" />
           </DatagridConfigurable>
